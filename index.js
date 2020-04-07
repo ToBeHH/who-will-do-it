@@ -6,6 +6,8 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET
 });
 
+const timers = [];
+
 function arrayToText(a) {
     if (a.length <= 2) {
         return a.join(' and ');
@@ -48,6 +50,30 @@ app.command('/who-will-do', async ({ command, ack, say }) => {
     db.defaults(JSON.parse(emptyDB)).write();
   }
   
+  timers[dbName] = setInterval(() => {
+    say({
+      blocks: [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": `We still don't have anybody doing the ${chore} for ${when}! Can you be the hero today?`
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "Yes, I will do it!"
+            },
+            "style": "primary",
+            "value": JSON.stringify({channel: command.channel_id, chore: chore, when: when}),
+            "action_id": "i_will_do"
+          }
+        }
+      ]
+    });
+  }, 1000 * 60 * 60 /* 1 hour */);
+  
   let message_blocks = [
     {
       "type": "section",
@@ -61,6 +87,7 @@ app.command('/who-will-do', async ({ command, ack, say }) => {
           "type": "plain_text",
           "text": "I will do it!"
         },
+        "style": "primary",
         "value": JSON.stringify({channel: command.channel_id, chore: chore, when: when}),
         "action_id": "i_will_do"
       }
@@ -84,6 +111,12 @@ app.action('i_will_do', async({context, action, body, ack, respond}) => {
     replace_original: true,
     text: `<@${body.user.name}> will do the ${actionData.chore} for ${actionData.when}! Please support him as good as you can!`
   });
+  
+  // name used for the db and the timer
+  const dbName = body.channel.id + actionData.chore;
+  
+  // delete the timer
+  clearInterval(timers[dbName]);
  
   // Thank user
   await app.client.chat.postMessage({
@@ -94,7 +127,6 @@ app.action('i_will_do', async({context, action, body, ack, respond}) => {
   });
   
   // remember user
-  const dbName = body.channel.id + actionData.chore;
   db.get(dbName)
     .push(body.user)
     .write();
