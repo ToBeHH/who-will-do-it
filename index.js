@@ -32,18 +32,20 @@ app.command('/who-will-do', async ({ command, ack, say }) => {
   
   // TODO: add, who did it last times
   let text = "Who want's to do the " + chore + " " + when + "? ";
-  var users=[];
-  var dbUsers = db.get(chore).value() // Find all users in the collection
+  let users=[];
+  const dbName = command.channel_id + chore;
+  const dbUsers = db.get(dbName).value() // Find all users in the collection
   if (dbUsers) {
     for (let i=dbUsers.length - 1; i >= Math.max(0, dbUsers.length - 3); i--) {
       const slack_user = await app.client.users.info({user: dbUsers[i].id, token: process.env.SLACK_BOT_TOKEN});
       users.push(slack_user.user.real_name);
     }
-    text = text + arrayToText(users) + " did it recently.";
+    if (users.length > 0) {
+      text = text + arrayToText(users) + " did it recently.";
+    }
   } else {
-    const emptyDB = `{ "${chore}": [] }`
-    db.defaults(JSON.parse(emptyDB)).write()
-    console.log(`Database ${chore} created`);
+    const emptyDB = `{ "${dbName}": [] }`;
+    db.defaults(JSON.parse(emptyDB)).write();
   }
   
   let message_blocks = [
@@ -92,7 +94,8 @@ app.action('i_will_do', async({context, action, body, ack, respond}) => {
   });
   
   // remember user
-  db.get(actionData.chore)
+  const dbName = body.channel.id + actionData.chore;
+  db.get(dbName)
     .push(body.user)
     .write();
 });
