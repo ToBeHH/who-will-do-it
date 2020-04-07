@@ -1,0 +1,17 @@
+{
+  "name": "@slack/who-does-it",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bot to ask people, who is doing a chore and telling, who did it last",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Tobias Schulz-Hess",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^1.2.0",
+    "lowdb": "1.x"
+  }
+}
