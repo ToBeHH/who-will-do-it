@@ -11,7 +11,7 @@
   "author": "Tobias Schulz-Hess",
   "license": "MIT",
   "dependencies": {
-    "@slack/bolt": "^1.2.0",
+    "@slack/bolt": "^4.4.0",
     "lowdb": "1.x"
   }
 }
