@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This app is not longer actively maintained. In order to get it running on an up-to-date node system, you might need to to some refactoring. Note that the packages are outdated as well, especially the database layer needs refactoring!
+
 # :zap: Bolt app "Who will do it?"
 
 This is an app, which asks about a chore to do. It also remembers, who did it last time and shows it in order to 
