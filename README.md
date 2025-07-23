@@ -7,8 +7,9 @@ motivate others to do the chore as well.
 
 ### Set env vars
 
-Set the environment variables in `.env` - `SLACK_SIGNING_SECRET`: Your app's _Signing Secret_
+Set the environment variables in `.env` 
 
+- `SLACK_SIGNING_SECRET`: Your app's _Signing Secret_
 - `SLACK_ACCESS_TOKEN` : Your bot token (Install app once to get an access token, `xoxb-`)
 
 ### (Re)install & Try the bot
